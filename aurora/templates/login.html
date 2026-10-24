@@ -1,0 +1,16 @@
+{% extends "auth_base.html" %}
+{% block card %}
+<div class="card auth-card">
+  <div class="brand"><div class="logo">{{ icon('sparkles','lg') }}</div><div><b>Aurora OS</b><small>{{ cfg.get('store_name','Supermarket') }}</small></div></div>
+  <h2 style="text-align:center;margin:10px 0 4px">Welcome back</h2>
+  <p class="muted" style="text-align:center;margin:0 0 18px">Sign in to start selling.</p>
+  <form id="f" class="stack" autocomplete="off">
+    <label class="f">Username<input name="username" autofocus required></label>
+    <label class="f">Password<input name="password" type="password" required></label>
+    <div id="err" class="err-box hide"></div>
+    <button class="btn pri lg block" id="go">Sign in</button>
+  </form>
+  <p class="faint" style="text-align:center;margin:16px 0 0;font-size:12px">Works fully offline · your data stays on this computer</p>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/login.js"></script>{% endblock %}

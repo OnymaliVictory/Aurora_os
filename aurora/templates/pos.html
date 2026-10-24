@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="shift-bar" class="hide card row sp" style="margin-bottom:12px;padding:10px 16px;border-color:var(--warn)">
+  <div class="row">{{ icon('wallet') }}<span><b>No cash shift open.</b> Open your shift to start selling and keep the drawer balanced.</span></div>
+  <button class="btn pri sm" id="open-shift">Open shift</button>
+</div>
+<div class="pos-wrap">
+  <section class="pos-left">
+    <div class="row">
+      <button class="btn icon-btn menu-btn" type="button" id="menu-btn2">{{ icon('menu') }}</button>
+      <div class="search"><span>{{ icon('search') }}</span><input id="q" placeholder="Search or scan a barcode…   (press / to focus)" autocomplete="off"></div>
+      <button class="btn" id="held-btn">{{ icon('play') }} Held <span class="pill" id="held-n">0</span></button>
+      <a class="btn icon-btn" href="/" title="Dashboard">{{ icon('layout-dashboard') }}</a>
+      <button class="btn icon-btn" id="theme-btn2" title="Switch theme">{{ icon('sun') }}</button>
+    </div>
+    <div class="cats" id="cats"></div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+  <section class="card cart">
+    <div class="cart-head">
+      <button class="btn sm" id="cust-btn">{{ icon('user') }} <span id="cust-lbl">Walk-in customer</span></button>
+      <span style="flex:1"></span>
+      <button class="btn sm" id="hold-btn" title="Park this basket (F4)">{{ icon('pause') }} Hold</button>
+      <button class="btn sm bad" id="clear-btn" title="Clear the basket">{{ icon('trash-2') }}</button>
+    </div>
+    <div class="cart-lines" id="lines"></div>
+    <div class="cart-foot">
+      <div class="tot-row"><span>Subtotal</span><span id="t-sub">₦0</span></div>
+      <div class="tot-row"><span>Discount <button class="btn sm ghost" id="disc-btn" style="padding:0 6px">{{ icon('percent','sm') }} change</button></span><span id="t-disc">₦0</span></div>
+      <div class="tot-row"><span id="t-tax-lbl">VAT included</span><span id="t-tax">₦0</span></div>
+      <div class="tot-row big"><span>Total</span><span id="t-total">₦0</span></div>
+      <button class="btn pri lg block" id="pay-btn" style="margin-top:10px" disabled>{{ icon('banknote') }} Charge <span class="kbd">F9</span></button>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/pos.js"></script>{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "auth_base.html" %}
+{% block card %}
+<div class="card auth-card wide">
+  <div class="brand"><div class="logo">{{ icon('sparkles','lg') }}</div><div><b>Aurora OS</b><small>Supermarket manager</small></div></div>
+  <h2 style="text-align:center;margin:10px 0 2px">Let's set up your shop</h2>
+  <p class="muted" style="text-align:center;margin:0 0 6px">Two quick steps. You can change everything later.</p>
+  <div class="steps"><i class="on" id="s1"></i><i id="s2"></i></div>
+  <form id="f" autocomplete="off">
+    <div id="p1" class="form">
+      <label class="f full">Shop name<input name="store_name" placeholder="e.g. Grace Supermarket" required></label>
+      <label class="f">Phone<input name="store_phone" placeholder="0803 000 0000"></label>
+      <label class="f">Address<input name="store_address" placeholder="Street, town"></label>
+      <div class="full row sp"><span></span><button type="button" class="btn pri" id="next">Next</button></div>
+    </div>
+    <div id="p2" class="form hide">
+      <p class="muted full" style="margin:0">Create the <b>owner</b> account. There is no default password — only you will know it.</p>
+      <label class="f">Your name<input name="name" required></label>
+      <label class="f">Username<input name="username" placeholder="e.g. owner" required></label>
+      <label class="f">Password (6+ characters)<input name="password" type="password" required></label>
+      <label class="f">Manager PIN (4–8 digits)<input name="pin" type="password" inputmode="numeric" maxlength="8" required></label>
+      <div class="full muted" style="font-size:12.5px">The PIN approves refunds and big discounts at the till.</div>
+      <label class="chk full"><input type="checkbox" name="load_demo" checked> Add sample products so I can try the till right away (you can delete them later)</label>
+      <div id="err" class="err-box hide full"></div>
+      <div class="full row sp"><button type="button" class="btn" id="back">Back</button><button class="btn pri" id="go">Finish setup</button></div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/setup.js"></script>{% endblock %}

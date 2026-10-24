@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Low stock, expiring goods and cash differences.</div>{% endblock %}
+{% block actions %}<button class="btn" id="readall">{{ icon('check') }} Mark all read</button>{% endblock %}
+{% block content %}<div class="card" id="list"></div>{% endblock %}
+{% block scripts %}<script src="/static/js/notifications.js"></script>{% endblock %}

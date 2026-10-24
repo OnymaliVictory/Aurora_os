@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Order stock from suppliers and receive deliveries with expiry dates.</div>{% endblock %}
+{% block actions %}<button class="btn" id="sugg">{{ icon('sparkles') }} Reorder what's low</button><button class="btn pri" id="add">{{ icon('plus') }} New order</button>{% endblock %}
+{% block content %}<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Order</th><th>Supplier</th><th>Status</th><th>Date</th><th class="num">Lines</th><th class="num">Total</th><th class="num">Paid</th></tr></thead><tbody id="rows"></tbody></table></div></div>{% endblock %}
+{% block scripts %}<script src="/static/js/purchases.js"></script>{% endblock %}

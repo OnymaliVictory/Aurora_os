@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Find any sale, reprint a receipt, refund or void.</div>{% endblock %}
+{% block content %}
+<div class="card"><div class="row" style="margin-bottom:14px"><div class="search"><span>{{ icon('search') }}</span><input id="q" placeholder="Receipt number or customer"></div>
+<label class="f">From<input type="date" id="from"></label><label class="f">To<input type="date" id="to"></label>
+<label class="f">Status<select id="st"><option value="">All</option><option value="completed">Completed</option><option value="partially_refunded">Partly refunded</option><option value="refunded">Refunded</option><option value="voided">Voided</option></select></label>
+{% if can('reports') %}<button class="btn" id="csv" style="align-self:end">{{ icon('download') }} CSV</button>{% endif %}</div>
+<div class="tbl-wrap"><table><thead><tr><th>Receipt</th><th>When</th><th>Cashier</th><th>Customer</th><th>Paid by</th><th>Status</th><th class="num">Total</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/sales.js"></script>{% endblock %}

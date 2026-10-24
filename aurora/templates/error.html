@@ -1,0 +1,9 @@
+{% extends "auth_base.html" %}
+{% block card %}
+<div class="card auth-card" style="text-align:center">
+  <div class="brand"><div class="logo">{{ icon('sparkles','lg') }}</div><div><b>Aurora OS</b></div></div>
+  <div class="big-num" style="margin-top:10px">{{ code }}</div>
+  <h2>{{ title }}</h2><p class="muted">{{ message }}</p>
+  <a class="btn pri" href="/">Back to the dashboard</a>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Everything you sell, with live stock and expiry dates.</div>{% endblock %}
+{% block actions %}
+<button class="btn" id="cats-btn">{{ icon('tags') }} Categories</button>
+<button class="btn" id="imp-btn">{{ icon('upload') }} Import</button>
+<button class="btn" id="exp-btn">{{ icon('download') }} Export</button>
+<button class="btn pri" id="add-btn">{{ icon('plus') }} Add product</button>
+<input type="file" id="file" accept=".csv,text/csv" class="hide">
+{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="row" style="margin-bottom:14px">
+    <div class="search"><span>{{ icon('search') }}</span><input id="q" placeholder="Search name, barcode, SKU, brand…"></div>
+    <select id="cat" style="width:auto"><option value="">All categories</option></select>
+    <div class="seg" id="flt"><button data-f="" class="on">All</button><button data-f="low">Low</button><button data-f="out">Out</button><button data-f="expiry">Expiring</button><button data-f="inactive">Hidden</button></div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>Product</th><th>Category</th><th class="num">Price</th>{% if can('cost_view') %}<th class="num">Cost</th>{% endif %}<th class="num">In stock</th><th>Next expiry</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/products.js"></script>{% endblock %}

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{{ s.receipt_no }}</title>
+<style>
+@page{margin:0;size:{{ cfg.receipt_width_mm }}mm auto}
+*{box-sizing:border-box}body{margin:0;background:#eee;font:12px/1.35 "Courier New",monospace;color:#000}
+.r{width:{{ cfg.receipt_width_mm }}mm;max-width:100%;margin:0 auto;background:#fff;padding:5mm 4mm}
+h1{font-size:15px;text-align:center;margin:0 0 2px}.c{text-align:center}.b{font-weight:700}
+hr{border:0;border-top:1px dashed #000;margin:6px 0}.row{display:flex;justify-content:space-between;gap:6px}
+.it{margin:3px 0}.sm{font-size:11px}.x{text-align:right}
+@media print{body{background:#fff}.r{width:auto;padding:2mm}.np{display:none}}
+</style></head><body>
+{% set cur = cfg.currency_symbol or '₦' %}
+{% macro m(k) %}{{ cur }}{{ '{:,.2f}'.format(k/100) }}{% endmacro %}
+<div class="r">
+  <h1>{{ cfg.store_name }}</h1>
+  {% if cfg.store_address %}<div class="c sm">{{ cfg.store_address }}</div>{% endif %}
+  {% if cfg.store_phone %}<div class="c sm">Tel: {{ cfg.store_phone }}</div>{% endif %}
+  <hr>
+  <div class="sm">Receipt: <b>{{ s.receipt_no }}</b></div>
+  <div class="sm">Date: {{ s.created_at }}</div>
+  <div class="sm">Cashier: {{ s.cashier_name }}</div>
+  {% if s.customer_name %}<div class="sm">Customer: {{ s.customer_name }}</div>{% endif %}
+  {% if s.status != 'completed' %}<div class="c b">** {{ s.status|upper|replace('_',' ') }} **</div>{% endif %}
+  <hr>
+  {% for i in s['items'] %}
+  <div class="it"><div>{{ i.name }}</div>
+    <div class="row sm"><span>{{ '%g'|format(i.qty) }} × {{ m(i.unit_price_kobo) }}</span><span>{{ m(i.total_kobo) }}</span></div></div>
+  {% endfor %}
+  <hr>
+  <div class="row"><span>Subtotal</span><span>{{ m(s.subtotal_kobo) }}</span></div>
+  {% if s.discount_kobo %}<div class="row"><span>Discount</span><span>-{{ m(s.discount_kobo) }}</span></div>{% endif %}
+  {% if s.tax_kobo %}<div class="row sm"><span>VAT included</span><span>{{ m(s.tax_kobo) }}</span></div>{% endif %}
+  <div class="row b" style="font-size:15px"><span>TOTAL</span><span>{{ m(s.total_kobo) }}</span></div>
+  <hr>
+  {% for p in s.payments %}<div class="row"><span>{{ p.method|title }}</span><span>{{ m(p.amount_kobo) }}</span></div>{% endfor %}
+  {% if s.change_kobo %}<div class="row"><span>Change</span><span>{{ m(s.change_kobo) }}</span></div>{% endif %}
+  {% if s.customer_name %}<hr><div class="sm">Points earned: {{ s.points_earned }} · Balance: {{ s.customer_points }}</div>{% endif %}
+  <hr><div class="c sm">{{ cfg.receipt_footer }}</div>
+  <div class="c sm" style="margin-top:4px">Powered by Aurora OS</div>
+  <div class="np c" style="margin-top:10px"><button onclick="window.print()">Print</button></div>
+</div>
+<script src="/static/js/receipt.js"></script>
+</body></html>

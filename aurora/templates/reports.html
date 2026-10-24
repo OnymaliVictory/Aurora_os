@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub" id="range-lbl">Sales, profit and what's worth stocking.</div>{% endblock %}
+{% block actions %}<button class="btn" id="csv">{{ icon('download') }} Sales CSV</button><button class="btn" id="print">{{ icon('printer') }} Print</button>{% endblock %}
+{% block content %}
+<div class="card row" style="margin-bottom:16px"><div class="seg" id="quick"><button data-d="0">Today</button><button data-d="6">7 days</button><button data-d="29" class="on">30 days</button><button data-d="month">This month</button><button data-d="89">90 days</button></div>
+<label class="f">From<input type="date" id="from"></label><label class="f">To<input type="date" id="to"></label></div>
+<div class="grid g4" id="tiles"></div>
+<div class="grid g-7-5" style="margin-top:16px"><div class="card"><h3>{{ icon('trending-up') }} Sales per day</h3><div class="chart"><canvas id="c-day"></canvas></div></div>
+<div class="card"><h3>{{ icon('tags') }} By category</h3><div class="chart" style="height:180px"><canvas id="c-cat"></canvas></div><div class="legend" id="cat-leg"></div></div></div>
+<div class="grid g2" style="margin-top:16px"><div class="card"><h3>{{ icon('star') }} Top products</h3><div class="tbl-wrap"><table><thead><tr><th>Product</th><th class="num">Sold</th><th class="num">Revenue</th>{% if can('profit') %}<th class="num">Profit</th>{% endif %}</tr></thead><tbody id="top"></tbody></table></div></div>
+<div class="stack"><div class="card"><h3>{{ icon('users') }} By cashier</h3><div id="cashier"></div></div><div class="card"><h3>{{ icon('wallet') }} Payment methods</h3><div id="mix"></div></div></div></div>
+{% if can('profit') %}<div class="grid g2" style="margin-top:16px"><div class="card"><h3>{{ icon('hand-coins') }} Expenses</h3><div id="exp"></div></div>
+<div class="card"><h3>{{ icon('boxes') }} Stock value &amp; slow movers</h3><div id="stockval"></div><h3 style="margin-top:14px;font-size:14px">Not sold in 30 days (cash sitting on the shelf)</h3><div id="dead"></div></div></div>{% endif %}
+{% endblock %}
+{% block scripts %}<script src="/static/js/reports.js"></script>{% endblock %}

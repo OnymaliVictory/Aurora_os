@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Who can use Aurora OS, and what they can do.</div>{% endblock %}
+{% block actions %}{% if can('users') %}<button class="btn pri" id="add">{{ icon('user-plus') }} Add staff</button>{% endif %}{% endblock %}
+{% block content %}
+<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Last sign-in</th><th>Status</th><th></th></tr></thead><tbody id="rows"></tbody></table></div></div>
+<div class="grid g3" style="margin-top:16px">
+<div class="card"><h3>{{ icon('user') }} Cashier</h3><p class="muted" style="margin:0">Uses the till, opens and closes their own shift, adds customers. Can't see costs or profit. Big discounts and refunds need a manager PIN.</p></div>
+<div class="card"><h3>{{ icon('badge-percent') }} Manager</h3><p class="muted" style="margin:0">Everything a cashier does, plus products, stock, purchases, refunds, expenses and reports. Has a PIN to approve at the till.</p></div>
+<div class="card"><h3>{{ icon('shield-check') }} Owner</h3><p class="muted" style="margin:0">Full control: staff, settings, backups, profit and the activity log.</p></div></div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/users.js"></script>{% endblock %}

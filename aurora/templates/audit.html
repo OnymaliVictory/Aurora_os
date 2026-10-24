@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">A permanent record of who did what. It can't be edited.</div>{% endblock %}
+{% block content %}<div class="card"><div class="row" style="margin-bottom:12px"><div class="search"><span>{{ icon('search') }}</span><input id="q" placeholder="Search activity or person"></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>When</th><th>Who</th><th>Action</th><th>What happened</th></tr></thead><tbody id="rows"></tbody></table></div></div>{% endblock %}
+{% block scripts %}<script src="/static/js/audit.js"></script>{% endblock %}

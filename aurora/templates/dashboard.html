@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub" id="today-lbl"></div>{% endblock %}
+{% block actions %}<a class="btn pri" href="/pos">{{ icon('shopping-cart') }} Open the till</a>{% endblock %}
+{% block content %}
+<div class="grid g4" id="stats">
+  <div class="card stat"><div class="lbl">{{ icon('banknote') }} Sales today</div><div class="val" id="s-rev">…</div><div class="hint" id="s-n"></div></div>
+  <div class="card stat"><div class="lbl">{{ icon('shopping-basket') }} Average basket</div><div class="val" id="s-avg">…</div><div class="hint">per customer today</div></div>
+  {% if can('profit') %}<div class="card stat"><div class="lbl">{{ icon('trending-up') }} Profit today</div><div class="val" id="s-profit">…</div><div class="hint">after cost of goods</div></div>{% endif %}
+  {% if can('products') %}<div class="card stat warn"><div class="lbl">{{ icon('triangle-alert') }} Needs attention</div><div class="val" id="s-alert">…</div><div class="hint" id="s-alert-h"></div></div>{% endif %}
+  {% if not can('profit') and not can('products') %}<div class="card stat"><div class="lbl">{{ icon('wallet') }} Owed by customers</div><div class="val" id="s-owed">…</div></div>{% endif %}
+</div>
+<div class="grid g-7-5" style="margin-top:16px">
+  <div class="card"><h3>{{ icon('trending-up') }} Last 7 days</h3><div class="chart"><canvas id="c-week"></canvas></div></div>
+  <div class="card"><h3>{{ icon('wallet') }} How customers paid today</h3><div class="chart" style="height:190px"><canvas id="c-mix"></canvas></div><div class="legend" id="mix-leg"></div></div>
+</div>
+<div class="grid g3" style="margin-top:16px">
+  <div class="card"><h3>{{ icon('clock') }} Busy hours today</h3><div class="chart" style="height:180px"><canvas id="c-hours"></canvas></div></div>
+  <div class="card"><h3>{{ icon('star') }} Best sellers today</h3><div id="top"></div></div>
+  {% if can('products') %}<div class="card"><h3>{{ icon('triangle-alert') }} Stock alerts</h3><div id="alerts"></div></div>{% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/dashboard.js"></script>{% endblock %}

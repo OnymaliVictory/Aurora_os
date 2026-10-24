@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Count the shelves, then let Aurora fix the numbers and show what went missing.</div>{% endblock %}
+{% block actions %}<button class="btn pri" id="add">{{ icon('plus') }} Start a stock count</button>{% endblock %}
+{% block content %}<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Count</th><th>Status</th><th>Started</th><th class="num">Progress</th></tr></thead><tbody id="rows"></tbody></table></div></div>{% endblock %}
+{% block scripts %}<script src="/static/js/stocktake.js"></script>{% endblock %}

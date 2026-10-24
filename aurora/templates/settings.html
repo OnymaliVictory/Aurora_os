@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Your shop details, VAT, till rules and backups.</div>{% endblock %}
+{% block actions %}<button class="btn pri" id="save">{{ icon('check') }} Save settings</button>{% endblock %}
+{% block content %}
+<div class="grid g2" id="sf">
+<div class="card"><h3>{{ icon('store') }} Shop</h3><div class="form">
+ <label class="f full">Shop name<input name="store_name"></label><label class="f">Phone<input name="store_phone"></label><label class="f">Email<input name="store_email"></label><label class="f full">Address<input name="store_address"></label><label class="f">Currency symbol<input name="currency_symbol" maxlength="3"></label></div></div>
+<div class="card"><h3>{{ icon('percent') }} VAT &amp; pricing</h3><div class="form">
+ <label class="f">VAT rate (%)<input name="tax_rate" type="number" step="0.01" min="0" max="100"></label>
+ <label class="chk" style="align-self:end"><input type="checkbox" name="prices_include_tax"> Shelf prices already include VAT</label>
+ <div class="muted full" style="font-size:12.5px">Nigeria's VAT is 7.5%. Mark basic foods "VAT-exempt" on each product.</div></div></div>
+<div class="card"><h3>{{ icon('shopping-cart') }} Till rules</h3><div class="form">
+ <label class="f">Cashier's biggest discount without PIN (%)<input name="cashier_max_discount_pct" type="number" step="0.5" min="0" max="100"></label>
+ <label class="f">Warn about expiry (days before)<input name="expiry_warning_days" type="number" min="1" max="365"></label>
+ <label class="chk full"><input type="checkbox" name="require_shift"> Cashiers must open a cash shift before selling</label>
+ <label class="chk full"><input type="checkbox" name="allow_oversell"> Allow selling when the system thinks stock is zero (stock records may be behind)</label></div></div>
+<div class="card"><h3>{{ icon('star') }} Loyalty points</h3><div class="form">
+ <label class="f">Points per ₦1 spent<input name="loyalty_points_per_naira" type="number" step="0.0001" min="0"></label>
+ <label class="f">Value of 1 point (₦)<input name="loyalty_naira_per_point" type="number" step="0.01" min="0"></label>
+ <div class="muted full" style="font-size:12.5px">Default: 1 point per ₦100 spent; each point is worth ₦1.</div></div></div>
+<div class="card"><h3>{{ icon('receipt') }} Receipt</h3><div class="form">
+ <label class="f">Paper width<select name="receipt_width_mm"><option value="80">80 mm (standard)</option><option value="58">58 mm (small)</option></select></label>
+ <label class="f full">Footer message<input name="receipt_footer"></label></div></div>
+<div class="card"><h3>{{ icon('database') }} Backups</h3><div class="form">
+ <label class="chk full"><input type="checkbox" name="auto_backup"> Back up automatically once a day</label>
+ <label class="f">Keep last<input name="backup_keep" type="number" min="1" max="365"></label>
+ <label class="f">Second copy folder (e.g. USB: E:\AuroraBackup)<input name="backup_folder"></label></div></div>
+</div>
+<div class="card" style="margin-top:16px"><div class="row sp"><h3 style="margin:0">{{ icon('hard-drive') }} Saved backups</h3><div class="row"><button class="btn" id="demo">{{ icon('sparkles') }} Load sample products</button><button class="btn pri" id="bk">{{ icon('folder-down') }} Back up now</button></div></div>
+<div class="tbl-wrap" style="margin-top:12px"><table><thead><tr><th>File</th><th>When</th><th class="num">Size</th><th></th></tr></thead><tbody id="bks"></tbody></table></div>
+<p class="muted" style="margin-bottom:0;font-size:12.5px">Your data lives in one folder on this computer, so it keeps working with no internet. Copy backups to a USB stick regularly.</p></div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/settings.js"></script>{% endblock %}

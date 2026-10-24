@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} · Aurora OS</title>
+<script src="/static/js/theme.js"></script>
+<link rel="stylesheet" href="/static/css/app.css">
+{% block head %}{% endblock %}
+</head>
+<body class="{{ page }}" data-page="{{ page }}" data-csrf="{{ csrf }}" data-cur="{{ cfg.get('currency_symbol','₦') }}" data-role="{{ me.role if me else '' }}"
+      data-cost="{{ 1 if can('cost_view') else 0 }}" data-profit="{{ 1 if can('profit') else 0 }}" data-refund="{{ 1 if can('refunds') else 0 }}"
+      data-products="{{ 1 if can('products') else 0 }}" data-price="{{ 1 if can('price_override') else 0 }}" data-userid="{{ me.id if me else '' }}">
+<canvas id="aurora-canvas" aria-hidden="true"></canvas>
+<div class="shell">
+  <aside class="side" id="side">
+    <div class="brand"><div class="logo">{{ icon('sparkles','lg') }}</div><div><b>Aurora OS</b><small>{{ cfg.get('store_name','') }}</small></div></div>
+    {% set ns = namespace(g='') %}
+    {% for key, url, label, ic, perm, grp in nav_all %}{% if can(perm) %}
+      {% if grp != ns.g %}<div class="grp">{{ grp }}</div>{% set ns.g = grp %}{% endif %}
+      <a class="nav {{ 'on' if page == key }}" href="{{ url }}">{{ icon(ic) }}<span>{{ label }}</span>{% if key == 'notifications' %}<span class="badge-n hide" id="notif-badge">0</span>{% endif %}</a>
+    {% endif %}{% endfor %}
+    <div class="foot">
+      <div class="who"><div class="avatar">{{ me.name[:1]|upper }}</div><div style="min-width:0"><div class="ellip"><b>{{ me.name }}</b></div><small>{{ me.role }}</small></div></div>
+      <div class="row">
+        <button class="btn sm ghost" id="theme-btn" type="button" style="flex:1">{{ icon('moon') }}<span id="theme-lbl">Light mode</span></button>
+        <form method="post" action="/logout" style="margin:0"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="btn sm ghost" title="Sign out">{{ icon('log-out') }}</button></form>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <button class="btn icon-btn menu-btn" id="menu-btn" type="button" aria-label="Menu">{{ icon('menu') }}</button>
+      <div><h1>{% block h1 %}{{ title }}{% endblock %}</h1>{% block sub %}{% endblock %}</div>
+      <div class="sp"></div>
+      {% block actions %}{% endblock %}
+    </div>
+    {% block content %}{% endblock %}
+  </main>
+</div>
+<div id="toasts" aria-live="polite"></div>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/charts.js"></script>
+<script src="/static/js/aurora-bg.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">The people and companies you buy stock from.</div>{% endblock %}
+{% block actions %}<button class="btn pri" id="add">{{ icon('plus') }} Add supplier</button>{% endblock %}
+{% block content %}<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Supplier</th><th>Contact</th><th>Terms</th><th class="num">Products</th><th class="num">We owe</th><th></th></tr></thead><tbody id="rows"></tbody></table></div></div>{% endblock %}
+{% block scripts %}<script src="/static/js/suppliers.js"></script>{% endblock %}

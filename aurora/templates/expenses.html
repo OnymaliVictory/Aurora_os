@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Rent, power, salaries, transport — so your profit is the real number.</div>{% endblock %}
+{% block actions %}<button class="btn pri" id="add">{{ icon('plus') }} Add expense</button>{% endblock %}
+{% block content %}
+<div class="grid g-7-5"><div class="card"><div class="row" style="margin-bottom:12px"><label class="f">From<input type="date" id="from"></label><label class="f">To<input type="date" id="to"></label><div class="stat" style="margin-left:auto"><div class="lbl">Total</div><div class="val" id="tot">₦0</div></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Note</th><th class="num">Amount</th><th></th></tr></thead><tbody id="rows"></tbody></table></div></div>
+<div class="card"><h3>{{ icon('chart-column') }} By category</h3><div id="cats"></div></div></div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/expenses.js"></script>{% endblock %}
