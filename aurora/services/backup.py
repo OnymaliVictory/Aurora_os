@@ -62,16 +62,16 @@ def restore_backup(name: str) -> None:
     if ok != "ok" or not has:
         raise ValueError("That backup file is damaged or is not an Aurora OS backup.")
     make_backup("before-restore")
+    # Copy the backup INTO the live database with SQLite's own backup tool. We never delete or
+    # swap files, because Windows refuses to delete a database file that is open anywhere.
+    snap = sqlite3.connect(str(src))
     live = connect()
     try:
+        snap.backup(live)
         live.execute("PRAGMA wal_checkpoint(TRUNCATE)")
     finally:
+        snap.close()
         live.close()
-    for ext in ("-wal", "-shm"):
-        p = Path(str(paths.db_path()) + ext)
-        if p.exists():
-            p.unlink()
-    shutil.copy2(src, paths.db_path())
     init_db()                                   # upgrades an older backup to the current structure
 
 
