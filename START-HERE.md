@@ -35,3 +35,8 @@ The program appears in `dist\AuroraOS\AuroraOS.exe`. To make a one-file installe
 `python -m pytest tests -q` runs 12 end-to-end tests. Code map: `aurora/services` (stock, sales, backup),
 `aurora/routes` (pages + JSON API), `aurora/templates`, `aurora/static`.
 Money is stored as whole kobo; every change that touches stock runs in one database transaction.
+
+
+## Subscription (licence) — added
+- The app checks a signed licence key (works offline). Paste the public key from the website into `aurora/license_public.txt` **before building**; if that file is empty the app runs with no licence check (developer mode).
+- With a key: 7 days before the end a banner and a daily alert appear; after the end date selling is paused (data, backups and CSV export still work) until a new key is pasted under **Subscription**.

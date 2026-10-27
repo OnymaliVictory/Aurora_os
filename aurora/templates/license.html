@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block sub %}<div class="sub">Your Aurora OS subscription and licence key.</div>{% endblock %}
+{% block content %}
+<div class="card lic-card" id="lic" data-state="{{ lic.state }}">
+  {% if lic.state == 'off' %}
+    <h3>{{ icon('star') }} Developer build</h3><p class="muted">Licensing is switched off in this copy of Aurora OS.</p>
+  {% else %}
+    {% if lic.state == 'active' or lic.state == 'expiring' %}
+      <div class="row sp"><h3 style="margin:0">{{ icon('star') }} {{ lic.business or 'Your subscription' }}</h3>{{ '<span class="pill warn">Ending soon</span>'|safe if lic.state == 'expiring' else '<span class="pill ok">Active</span>'|safe }}</div>
+      <p class="muted" style="margin:6px 0 0">{{ 'Yearly' if lic.plan == 'yearly' else 'Monthly' }} plan · works until <b>{{ lic.expires_pretty }}</b></p>
+      <div class="lic-bar"><i style="width:{{ [3, [100, (lic.days_left / (365 if lic.plan == 'yearly' else 30) * 100)|round(0, 'floor')|int]|min]|max }}%"></i></div>
+      <p style="margin:0 0 14px"><b>{{ 'Ends tonight' if lic.days_left == 0 else (lic.days_left ~ ' day' ~ ('' if lic.days_left == 1 else 's') ~ ' left') }}</b></p>
+    {% elif lic.state == 'expired' %}
+      <div class="row sp"><h3 style="margin:0">{{ icon('star') }} Subscription ended</h3><span class="pill bad">Paused</span></div>
+      <p>Selling is paused. <b>Your data is safe</b> — you can still sign in, save backups and export your products and sales. Renew and paste the new key below to carry on exactly where you stopped.</p>
+    {% elif lic.state == 'invalid' %}
+      <h3>{{ icon('star') }} Key not recognised</h3><p>The saved key is not valid. Paste your key again from your Aurora account.</p>
+    {% else %}
+      <h3>{{ icon('star') }} Welcome to Aurora OS</h3><p>Paste the licence key from your Aurora account to start. No account yet? Subscribe on the Aurora website first.</p>
+    {% endif %}
+
+    {% if can('settings') %}
+      <label class="f full">{{ 'Paste a new key (when you renew)' if lic.state in ('active','expiring') else 'Licence key' }}
+        <textarea id="key" class="lic-key" placeholder="AUR1.…" spellcheck="false"></textarea></label>
+      <div class="row" style="margin-top:12px;flex-wrap:wrap">
+        <button class="btn pri" id="go">{{ icon('check') }} Save key</button>
+        <button class="btn" id="site">{{ icon('shopping-cart') }} {{ 'Renew on the website' if lic.state != 'none' else 'Buy on the website' }}</button>
+        <a class="btn" href="/api/products/export.csv" download>{{ icon('download') }} Export products</a>
+      </div>
+      <p class="muted" style="font-size:12.5px;margin-bottom:0">The website opens in your browser. After your payment is confirmed, the key appears in your Aurora account — copy it and paste it here. Renewing early keeps the days you have left. The key works offline.</p>
+    {% else %}
+      <p class="muted">Ask the shop owner or a manager to enter the licence key.</p>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/license.js"></script>{% endblock %}

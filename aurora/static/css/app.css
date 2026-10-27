@@ -184,3 +184,10 @@ body.pos .top{display:none}
 body.pos .menu-btn{display:inline-flex}
 body.pos .side{position:fixed;left:0;top:0;z-index:40;transform:translateX(-102%);transition:.25s;background:var(--panel-solid)}
 body.pos.nav-open .side{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.5)}
+
+/* subscription countdown banner */
+.lic-banner{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:0 0 14px;border-radius:12px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.45);color:var(--text,inherit);font-size:13.5px}
+.lic-banner span{flex:1}
+.lic-card{max-width:620px}
+.lic-key{width:100%;min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.lic-bar{height:9px;border-radius:99px;background:rgba(128,128,128,.25);overflow:hidden;margin:10px 0 4px}.lic-bar i{display:block;height:100%;background:var(--accent,#7c5cff)}

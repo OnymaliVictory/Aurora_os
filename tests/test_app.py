@@ -199,3 +199,87 @@ def test_lockout(app):
         c.post("/api/login", {"username": "bola", "password": "wrong"})
     r = c.post("/api/login", {"username": "bola", "password": "cash123"})
     assert r.status_code == 401 and "Too many" in r.get_json()["error"]
+
+
+# ------------------------------------------------------------------ subscription licence
+def _keys():
+    import base64
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    priv = Ed25519PrivateKey.generate()
+    pub = base64.b64encode(priv.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)).decode()
+    return priv, pub
+
+
+def _token(priv, days, plan="yearly"):
+    import base64
+    import json
+    from datetime import date, timedelta
+    raw = json.dumps({"v": 1, "id": "u1", "biz": "Test Mart", "plan": plan, "iat": date.today().isoformat(),
+                      "exp": (date.today() + timedelta(days=days)).isoformat()}).encode()
+    body = base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+    sig = base64.urlsafe_b64encode(priv.sign(raw)).rstrip(b"=").decode()
+    return f"AUR1.{body}.{sig}"
+
+
+def test_license_states_and_gating(owner, monkeypatch):
+    from aurora import license, paths
+    priv, pub = _keys()
+    monkeypatch.setattr(license, "_PUBKEY_OVERRIDE", pub)
+    for f in ("license.key", "license.seen"):
+        (paths.data_dir() / f).unlink(missing_ok=True)
+
+    assert license.status()["state"] == "none"
+    r = owner.get("/api/products")                       # no key: selling is paused
+    assert r.status_code == 402
+    assert owner.page("/pos").status_code == 302         # pages go to the subscription screen
+    assert owner.page("/license").status_code == 200     # ...which stays reachable
+    assert owner.get("/api/products/export.csv").status_code == 200   # data can always be exported
+
+    assert owner.post("/api/license", {"key": "AUR1.junk.junk"}).status_code == 400
+    other, _ = _keys()
+    assert owner.post("/api/license", {"key": _token(other, 30)}).status_code == 400      # signed by the wrong key
+    tampered = _token(priv, 30).split(".")
+    tampered[1] = tampered[1][:-2] + "AA"
+    assert owner.post("/api/license", {"key": ".".join(tampered)}).status_code == 400
+    assert owner.post("/api/license", {"key": _token(priv, -1)}).status_code == 400       # already ended
+
+    assert owner.post("/api/license", {"key": _token(priv, 30)}).status_code == 200
+    assert license.status()["state"] == "active"
+    assert owner.get("/api/products").status_code == 200
+    assert "lic-banner" not in owner.page("/pos").get_data(as_text=True)
+
+    # final week: banner + daily alert, still works
+    assert owner.post("/api/license", {"key": _token(priv, 30)}).status_code == 400       # same length: refused
+    (paths.data_dir() / "license.key").unlink()
+    assert owner.post("/api/license", {"key": _token(priv, 5)}).status_code == 200
+    assert license.status()["state"] == "expiring" and license.status()["days_left"] == 5
+    html = owner.page("/pos").get_data(as_text=True)
+    assert "lic-banner" in html and "ends in 5 days" in html
+    owner.page("/license")
+    assert any("Subscription ending" in n["title"] for n in owner.get("/api/notifications").get_json()["items"])
+
+    # renewal with a longer key works; a shorter one does not
+    assert owner.post("/api/license", {"key": _token(priv, 40)}).status_code == 200
+    assert license.status()["days_left"] == 40
+
+    # expiry pauses the till; clock rollback does not bring it back
+    (paths.data_dir() / "license.key").write_text(_token(priv, 0))
+    assert license.status()["state"] == "expiring" and license.status()["days_left"] == 0
+    from datetime import date, timedelta
+    (paths.data_dir() / "license.seen").write_text((date.today() + timedelta(days=1)).isoformat())   # we have already seen tomorrow
+    assert license.status()["state"] == "expired"
+    assert owner.get("/api/products").status_code == 402
+    assert owner.post("/api/license", {"key": _token(priv, 365)}).status_code == 200      # renewal brings it back
+    assert owner.get("/api/products").status_code == 200
+
+    for f in ("license.key", "license.seen"):
+        (paths.data_dir() / f).unlink(missing_ok=True)
+
+
+def test_key_made_by_the_website_verifies(monkeypatch):
+    """A real key produced by the website's Node code (supabase-backend/server/license.js) with a throw-away key pair."""
+    from aurora import license
+    monkeypatch.setattr(license, "_PUBKEY_OVERRIDE", "9zUqO55nI2f9t5wT94NmeHq4zxGLEsLU9zRy43kznmw=")
+    p = license.verify("AUR1.eyJ2IjoxLCJpZCI6InUxIiwiYml6IjoiTWFtYSBOZ296aSIsInBsYW4iOiJ5ZWFybHkiLCJpYXQiOiIyMDI2LTEwLTI0IiwiZXhwIjoiMjAyNi0xMS0wMyJ9.PfXG1aEnrB21G634WjhJcAjubOdUzc1iMCrGitLJxOzyU0hesjJ-O_MsaaTNN3nq0ImtWO0AxMCRyZSFeta9AA")
+    assert p and p["biz"] == "Mama Ngozi" and p["plan"] == "yearly" and p["exp"] == "2026-11-03"

@@ -35,6 +35,7 @@
       <div class="sp"></div>
       {% block actions %}{% endblock %}
     </div>
+    {% if lic_banner %}<div class="lic-banner" role="alert">{{ icon('bell') }}<span>{{ lic_banner.message }}</span><a class="btn sm" href="/license">Renew</a></div>{% endif %}
     {% block content %}{% endblock %}
   </main>
 </div>

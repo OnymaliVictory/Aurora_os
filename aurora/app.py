@@ -3,9 +3,9 @@ import os
 import sys
 
 from markupsafe import Markup
-from flask import Flask, jsonify, render_template, request, session
+from flask import Flask, jsonify, redirect, render_template, request, session
 
-from . import __version__, db, money, paths, security
+from . import __version__, db, license, money, paths, security
 from .validate import BadInput
 
 
@@ -30,6 +30,7 @@ def create_app(testing=False):
         cfg = db.get_settings(db.get_db()) if user or request.endpoint in ("pages.login", "pages.setup") else {}
         return {
             "me": user, "cfg": cfg, "can": security.can, "csrf": security.csrf_token(),
+            "lic_banner": license.banner(db.get_db()) if user else None,
             "nav_all": __import__("aurora.routes.pages", fromlist=["NAV"]).NAV, "version": __version__, "naira": lambda k: money.naira(k, cfg.get("currency_symbol", "₦")),
         }
 
@@ -37,11 +38,25 @@ def create_app(testing=False):
     def icon(name, cls=""):
         return Markup(f'<svg class="i {cls}" aria-hidden="true"><use href="/static/img/sprite.svg#{name}"/></svg>')
 
+    # Paths that keep working while the subscription is paused (so nothing is ever held hostage).
+    OPEN_PATHS = ("/static/", "/login", "/api/login", "/logout", "/setup", "/api/setup", "/license", "/api/license",
+                  "/api/me", "/api/notifications", "/api/backups", "/api/products/export.csv", "/api/reports/sales.csv")
+
     @app.before_request
     def guard():
         if request.endpoint == "static":
             return None
-        return security.check_csrf()
+        bad = security.check_csrf()
+        if bad is not None:
+            return bad
+        if license.enabled() and not request.path.startswith(OPEN_PATHS):
+            if not license.status(db.get_db())["ok"]:
+                if request.path.startswith("/api/") or request.is_json or request.headers.get("X-Requested-With") == "fetch":
+                    return jsonify(error="Your Aurora OS subscription has ended, so selling is paused. Renew to continue.", license=True), 402
+                return redirect("/license")
+            if request.method == "GET" and session.get("uid"):
+                license.remind(db.get_db())
+        return None
 
     @app.after_request
     def headers(resp):
@@ -96,7 +111,8 @@ def create_app(testing=False):
 
     # ---------------- screens ----------------
     from .routes import pages, api_catalog, api_pos, api_ops, api_reports
-    for bp in (pages.bp, api_catalog.bp, api_pos.bp, api_ops.bp, api_reports.bp):
+    from .routes import api_license
+    for bp in (pages.bp, api_catalog.bp, api_pos.bp, api_ops.bp, api_reports.bp, api_license.bp):
         app.register_blueprint(bp)
 
     # nightly chores: automatic backup + expiry scan (runs once when the app starts each day)

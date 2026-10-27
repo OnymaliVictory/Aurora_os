@@ -6,8 +6,9 @@ a = Analysis(
     [os.path.join(root, "run.py")],
     pathex=[root],
     datas=[(os.path.join(root, "aurora", "templates"), "templates"),
-           (os.path.join(root, "aurora", "static"), "static")],
-    hiddenimports=["waitress", "webview", "webview.platforms.winforms", "webview.platforms.edgechromium"],
+           (os.path.join(root, "aurora", "static"), "static"),
+           (os.path.join(root, "aurora", "license_public.txt"), ".")],
+    hiddenimports=["waitress", "webview", "webview.platforms.winforms", "webview.platforms.edgechromium", "cryptography"],
     excludes=["tkinter", "pytest", "playwright"],
 )
 pyz = PYZ(a.pure)
